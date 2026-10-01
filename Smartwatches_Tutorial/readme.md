@@ -361,41 +361,13 @@ Part 2 (pick one)
   Process the .wada files (assignment)
 ```
 
-## How this connects to the assignment
-
-```text
-.wada files
-        ↓
-Wada.jar
-        ↓
-Accelerometer CSV files
-        ↓
-Your Java program
-        ↓
-1-second windows
-        ↓
-Feature extraction
-        ↓
-features.csv
-        ↓
-Wada.jar
-        ↓
-features.arff
-        ↓
-WEKA
-        ↓
-Decision tree classification
-```
-
-The raw WADA files may contain other sensors, but Assignment 1 uses only the **accelerometer** data.
-
 ## Three different WADA tools
 
 These are easy to mix up:
 
-- **WADA watch app** runs on the watch. Use it to START and STOP recording, choose labels, and store the sensor data.
+- **WADA watch app** runs on the watch. Use it to START and STOP recording, choose labels, and store the sensor data. The one on your laptop will have code to uninstall the app. **PLEASE DON'T DO THAT**
 - **WADA Desktop app** runs on your computer (Path A only). Use it to create and push configurations and download recordings.
-- **Wada.jar** runs on your computer after data collection. Use it to extract accelerometer data from `.wada` files and to convert CSV feature files to ARFF.
+- **Wada.jar** runs on your computer after data collection. Use it to extract accelerometer data from `.wada` files and to convert CSV feature files to ARFF. **YOU CAN ALSO USE PYTHON TO CONVERT AND PREPROCESS THE FILES**
 
 ---
 
