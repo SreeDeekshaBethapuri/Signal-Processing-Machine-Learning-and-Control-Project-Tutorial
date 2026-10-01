@@ -19,6 +19,13 @@ All files referenced below are in the `Contents` folder of this repository.
 - `adb-devices.png`: expected output of `adb devices`
 - `access-config-through-adb.png`: viewing the WADA configuration stored on the watch
 
+### Video demos (Canvas)
+
+- [Setting debug to true](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20766421): turning on ADB debugging on the watch (Part 1, Step 1)
+- [Setting up the GUI](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20773075): getting the WADA Desktop app running (Path A)
+- [Loading an existing configuration](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20773274): loading and pushing a saved configuration with the desktop app (Path A)
+- [Seeing the new configuration on the watch](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20773151): what changes on the watch after a configuration is pushed
+
 ---
 
 ## How this guide is organized
@@ -55,6 +62,8 @@ Settings > Developer Options
 and enable **ADB debugging**.
 
 If you don't see Developer Options, or you're unsure how to do this, follow the `setting-debug-to-true` video in this repository.
+
+> **Video demo:** [Setting debug to true](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20766421) (Canvas)
 
 ---
 
@@ -201,6 +210,8 @@ java -jar "WaDa Desktop.jar"
 
 The app has three tabs: **Home**, **Configuration**, and **Data**.
 
+> **Video demo:** [Setting up the GUI](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20773075) (Canvas)
+
 ### A5. Create and push a configuration
 
 Use the **Configuration** tab to define what the watch records. A configuration includes a name, tags, options for each tag, sensors, and a sampling rate. For example:
@@ -227,6 +238,10 @@ Click **>>** to move the accelerometer into **Selected Sensors**.
 Click **Save** to keep a copy on your computer, then **Push** to send the configuration to the watch.
 
 > The Configuration tab starts out empty. That's normal. Either fill it in or click **Load** to open a saved configuration.
+
+> **Video demos:**
+> - [Loading an existing configuration](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20773274) (Canvas)
+> - [Seeing the new configuration on the watch](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20773151) (Canvas)
 
 ### A6. Download your data
 
@@ -287,6 +302,8 @@ adb shell am force-stop edu.virginia.cs.mooncake.wada
 ```
 
 Then open WADA again on the watch.
+
+> **Video demo:** [Seeing the new configuration on the watch](https://canvas.its.virginia.edu/courses/188282/files/folder/SmartWatches/Video%20Demos?preview=20773151) (Canvas)
 
 ### B6. See your recorded files
 
