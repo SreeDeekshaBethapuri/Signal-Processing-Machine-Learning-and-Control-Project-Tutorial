@@ -32,14 +32,7 @@ First, make sure **Developer Options** and **ADB debugging** are enabled on the 
 
 ### Enable Developer Options
 
-On the watch:
-
-1. Open `Settings`
-2. Go to `About`
-3. Find `Build Number`
-4. Tap `Build Number` approximately seven times, or until the watch indicates that Developer Options have been enabled
-
-Then go to:
+On the watch Go to:
 
 ```text
 Settings > Developer Options
