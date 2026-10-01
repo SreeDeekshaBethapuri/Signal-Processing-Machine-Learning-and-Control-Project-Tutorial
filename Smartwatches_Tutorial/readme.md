@@ -2,169 +2,122 @@
 
 ## Overview
 
-This repository includes detailed tutorials and demos on how to use your smartwatches, including how to set them up, configure WADA, and push/pull data between the watch and your computer.
+This repository walks you through setting up your smartwatch, configuring WADA, and moving data between the watch and your computer.
 
-The tutorials are being developed on a **Windows system**, but most of the commands and steps should be similar across operating systems.
+The screenshots were taken on **Windows**. The steps also work on macOS and Linux, except where noted.
 
-> **Note:** macOS users may run into issues with the WADA desktop GUI or Windows `.bat` files. If that happens, the same operations can be performed directly using ADB commands from Terminal.
+All files referenced below are in the `Contents` folder of this repository.
 
-> **Note:** All files referenced throughout the tutorials and documentation can be found in the `Contents` folder of this repository.
+### Contents
 
----
-
-## Contents
-
-- `Smart Watches, Weka, and Programming Assignment.pptx` provides an overview of the full process and the tools you will be using.
-- `android tools.png` shows the Android Platform Tools webpage.
-- `Download_sdk.png` shows where to download the appropriate Platform Tools package.
-- `Platform-tools-contents.png` shows what the extracted `platform-tools` folder should look like.
-- `open-cmd-from-platform tools.png` shows how to open Command Prompt directly from the `platform-tools` folder.
-- `adb-devices.png` shows the expected output from the `adb devices` command.
-- `access-config-through-adb.png` shows how to access the WADA configuration file stored on the watch.
+- `Smart Watches, Weka, and Programming Assignment.pptx`: overview of the full process and the tools you'll use
+- `setting-debug-to-true`: video showing how to turn on ADB debugging on the watch
+- `android tools.png`: the Android Platform Tools download page
+- `Download_sdk.png`: where to download the right Platform Tools package
+- `Platform-tools-contents.png`: what the extracted `platform-tools` folder should look like
+- `open-cmd-from-platform tools.png`: opening Command Prompt inside the `platform-tools` folder
+- `adb-devices.png`: expected output of `adb devices`
+- `access-config-through-adb.png`: viewing the WADA configuration stored on the watch
 
 ---
 
-# Step 1: Set Up the Watch
+## How this guide is organized
 
-WADA is already installed on the watch, so you do **not** need to install it yourself.
+WADA is already installed on your watch. Your job is to send it a **configuration** (what to record and how to label it) and later **download the recorded data** to your computer.
 
-First, make sure **Developer Options** and **ADB debugging** are enabled on the watch.
+Your computer talks to the watch through a small tool called **ADB** (Android Debug Bridge). Everyone needs it, so **Part 1** is the same for everybody.
 
-### Enable Developer Options
+In **Part 2** you pick one of two ways to manage the watch:
 
-On the watch Go to:
+| | **Path A: WADA Desktop app** | **Path B: Commands** |
+|---|---|---|
+| What it is | A point-and-click window | Typing a few short commands |
+| Extra installs | Java + the WADA desktop app | Nothing extra |
+
+Both paths do exactly the same thing. The desktop app just runs the same ADB commands for you behind the buttons, so you don't miss anything by choosing Path B.
+
+> **Note for Mac users:** Path A has not been tested on macOS and may not work properly there. If you run into problems, use Path B.
+
+> **Note:** You'll need Java later in the assignment anyway (for `Wada.jar` and your own program), so installing it now doesn't hurt even if you choose Path B.
+
+---
+
+# Part 1: Setup (everyone)
+
+## Step 1: Turn on ADB debugging on the watch
+
+On the watch, go to:
 
 ```text
 Settings > Developer Options
 ```
 
-and enable:
+and enable **ADB debugging**.
 
-```text
-ADB debugging
-```
-
-If you are unsure how to do this, follow the video tutorial provided in this repository.
+If you don't see Developer Options, or you're unsure how to do this, follow the `setting-debug-to-true` video in this repository.
 
 ---
 
-# Step 2: Install Android Platform Tools
+## Step 2: Install Android Platform Tools
 
-Open Chrome or your preferred browser and search for:
+Platform Tools is a small download that contains ADB.
 
-```text
-Android Platform Tools
-```
+> You do **not** need Android Studio. It also includes ADB, but it's a very large install you won't otherwise use.
 
-You can also go directly to:
+Go to the Android Platform Tools page:
 
 [https://developer.android.com/tools/releases/platform-tools](https://developer.android.com/tools/releases/platform-tools)
 
-It should take you to a page similar to the screenshot below:
-
 ![Android Platform Tools page](Contents/android%20tools.png)
 
-Scroll down and select the download option that matches your operating system.
+Scroll down, choose the download for your operating system, accept the terms, and download the `.zip` file.
 
-![Platform Tools download](Contents/Download_sdk.png)
-
-Accept the terms and conditions and download the package.
-
-This should download a `.zip` file.
-
-Extract the `.zip` file.
-
-On Windows, you can place the extracted folder directly in your `C:\` drive to keep things simple.
-
-For example:
+Extract it. On Windows, putting it directly on your `C:\` drive keeps things simple:
 
 ```text
 C:\platform-tools
 ```
 
-Open the `platform-tools` folder.
-
-You should see several files similar to:
+Open the `platform-tools` folder. It should look similar to this:
 
 ![Platform Tools contents](Contents/Platform-tools-contents.png)
 
-One of the most important files in this folder is:
+Make sure you can see `adb` (`adb.exe` on Windows) before continuing.
 
-```text
-adb.exe
-```
-
-`adb`, or **Android Debug Bridge**, is the tool we will use to communicate with the smartwatch and push or pull files between the watch and your computer.
-
-Make sure `adb.exe` is present before continuing.
-
-> You do **not** need to install the full Android Studio IDE for this assignment. Android Studio also provides ADB, but it is a much larger installation. The standalone Android Platform Tools package is sufficient for what we need.
+> **macOS shortcut:** If you use Homebrew, you can skip the download and run `brew install android-platform-tools` instead. Then `adb` works from any Terminal window.
 
 ---
 
-# Step 3: Open Command Prompt in the Platform Tools Folder
+## Step 3: Open a terminal in the `platform-tools` folder
 
-You will need to run ADB commands from the `platform-tools` folder.
+You'll run ADB commands from inside this folder.
 
-There are two easy ways to open Command Prompt from this folder.
+**Windows**, either:
 
-## Option 1: Use the File Explorer Address Bar
-
-Open the `platform-tools` folder in File Explorer.
-
-Click the address bar at the top of the window and type:
-
-```text
-cmd
-```
-
-Press **Enter**.
-
-This opens Command Prompt directly inside the current `platform-tools` directory.
-
-## Option 2: Right-Click and Open Terminal
-
-You can also right-click inside the `platform-tools` folder and select:
-
-```text
-Open in Terminal
-```
-
-or:
-
-```text
-Open command window here
-```
-
-depending on your version of Windows.
+- Open the `platform-tools` folder in File Explorer, click the address bar, type `cmd`, and press **Enter**, or
+- Right-click inside the folder and choose **Open in Terminal** (or **Open command window here**, depending on your Windows version).
 
 ![Open Command Prompt from Platform Tools](Contents/open-cmd-from-platform%20tools.png)
 
-Once Command Prompt is open in the `platform-tools` directory, you should be able to use ADB commands.
+**macOS**: right-click the `platform-tools` folder in Finder and choose **New Terminal at Folder**.
+
+> **macOS/Linux note:** When running ADB from inside the folder, type `./adb` instead of `adb` (for example, `./adb devices`). If you installed it with Homebrew, plain `adb` works.
 
 ---
 
-# Step 4: Connect and Verify the Watch
+## Step 4: Connect and verify the watch
 
-Connect the smartwatch to your computer using the USB cable.
+Connect the watch to your computer with the USB cable.
 
-The first time the watch connects to a computer, you may see a message asking whether you want to allow USB debugging.
+The first time you connect, the watch will ask whether to allow USB debugging. Choose **Always allow from this computer** and approve.
 
-Select:
-
-```text
-Always allow from this computer
-```
-
-and approve the connection.
-
-In Command Prompt, run:
+Then run:
 
 ```cmd
 adb devices
 ```
 
-You should see output similar to:
+You should see something like:
 
 ```text
 List of devices attached
@@ -173,127 +126,56 @@ XXXXXXXXXXXX    device
 
 ![ADB devices output](Contents/adb-devices.png)
 
-The important part is that the device appears with:
+The word `device` next to the serial number means you're connected. If it says `unauthorized`, check the watch screen for the approval prompt and run `adb devices` again.
 
-```text
-device
-```
-
-next to its serial number.
-
-If it says:
-
-```text
-unauthorized
-```
-
-check the watch for the USB debugging authorization message.
-
-Then run:
-
-```cmd
-adb devices
-```
-
-again.
+**Once you see `device`, Part 1 is done.** Move on to Part 2 and pick a path.
 
 ---
 
-# Step 5: Install Java
+# Part 2: Choose how to manage the watch
 
-The WADA desktop application is a Java application, so Java must be installed on your computer before you can run it.
+## Path A: WADA Desktop app (recommended on Windows)
 
-For Windows, Java can be downloaded from Adoptium:
+> **Note:** This path has not been tested on macOS. If you run into problems on a Mac, use Path B instead.
 
-[Download Java from Adoptium](https://adoptium.net/en-GB/download?link=https%3A%2F%2Fgithub.com%2Fadoptium%2Ftemurin25-binaries%2Freleases%2Fdownload%2Fjdk-25.0.4.1%252B1%2FOpenJDK25U-jdk_x64_windows_hotspot_25.0.4.1_1.msi&vendor=Adoptium)
+### A1. Install Java
 
-Download and run the installer.
+The desktop app is a Java program.
 
-The default installation options should be sufficient.
+Download Java (Temurin) from Adoptium:
 
-After Java has been installed, close and reopen Command Prompt.
+[https://adoptium.net/](https://adoptium.net/)
 
-Verify the installation by running:
+Run the installer with the default options. Then close and reopen Command Prompt, and check it worked:
 
 ```cmd
 java -version
 ```
 
-If Java is installed correctly, you should see information about the installed Java version.
+You should see version information. If you see `'java' is not recognized...`, close Command Prompt, reopen it, and try again.
 
-If you see:
+### A2. Download the WADA desktop app
 
-```text
-'java' is not recognized as an internal or external command
-```
-
-close Command Prompt, open it again, and retry.
-
----
-
-# Step 6: Download the WADA Desktop Application
-
-The WADA project is available from the original GitHub repository:
+Go to the WADA repository:
 
 [https://github.com/abumondol/WaDa](https://github.com/abumondol/WaDa)
 
-On the GitHub page:
+Click **Code > Download ZIP**, then extract the ZIP.
 
-1. Click **Code**
-2. Select **Download ZIP**
-3. Download the repository
-4. Extract the ZIP file
-
-Inside the extracted repository, locate:
+Inside, open the `desktop app` folder. You should see:
 
 ```text
-desktop app
-```
-
-This folder contains the WADA desktop application and supporting files.
-
-You should see files similar to:
-
-```text
-config
-pullData
-pushConfig
+config.json
+pullData.cmd
+pushConfig.cmd
 WaDa Desktop.jar
 ```
 
-The important file is:
+### A3. Copy the files into `platform-tools`
 
-```text
-WaDa Desktop.jar
-```
+Copy everything from `desktop app` into your `platform-tools` folder. This lets the desktop app find ADB.
 
-This is the graphical WADA desktop application.
-
----
-
-# Step 7: Place the WADA Desktop Files with Platform Tools
-
-For convenience, especially on Windows, copy the contents of the:
-
-```text
-desktop app
-```
-
-folder into your:
-
-```text
-platform-tools
-```
-
-folder.
-
-For example:
-
-```text
-C:\platform-tools
-```
-
-Your folder may now look similar to:
+Your folder should now look similar to:
 
 ```text
 C:\platform-tools
@@ -302,81 +184,26 @@ C:\platform-tools
 ├── fastboot.exe
 ├── WaDa Desktop.jar
 ├── config.json
-├── pushConfig.bat
-├── pullData.bat
+├── pushConfig.cmd
+├── pullData.cmd
 └── ...
 ```
 
-Keeping everything together makes it easier for the WADA desktop application and command-line tools to find `adb`.
+### A4. Open the desktop app
 
----
+Double-click `WaDa Desktop.jar`.
 
-# Step 8: Choose How You Want to Interact with the Watch
-
-There are two ways to configure the watch and transfer WADA data:
-
-1. **WADA Desktop GUI**
-2. **ADB commands using Command Prompt / Terminal**
-
-Both approaches perform the same basic operations.
-
-You can use whichever method works best on your system.
-
----
-
-# Option 1: Use the WADA Desktop GUI
-
-For Windows, this is usually the easiest option.
-
-Before starting, make sure:
-
-- Java is installed
-- Android Platform Tools are installed
-- The watch is connected by USB
-- ADB debugging is enabled
-- `adb devices` shows the watch as `device`
-
-Navigate to the folder containing:
-
-```text
-WaDa Desktop.jar
-```
-
-You can first try double-clicking:
-
-```text
-WaDa Desktop.jar
-```
-
-If that does not work, open Command Prompt in the same folder and run:
+If nothing happens, open Command Prompt in the `platform-tools` folder and run:
 
 ```cmd
 java -jar "WaDa Desktop.jar"
 ```
 
-The WADA desktop application should open.
+The app has three tabs: **Home**, **Configuration**, and **Data**.
 
-The application contains three main tabs:
+### A5. Create and push a configuration
 
-```text
-Home
-Configuration
-Data
-```
-
-## Configuration Tab
-
-The Configuration tab is used to create and upload a configuration to the smartwatch.
-
-It allows you to define:
-
-- Configuration name
-- Tags
-- Options for each tag
-- Sensors
-- Sampling rates
-
-A configuration may include fields such as:
+Use the **Configuration** tab to define what the watch records. A configuration includes a name, tags, options for each tag, sensors, and a sampling rate. For example:
 
 ```text
 Configuration Name: HandWash
@@ -391,293 +218,146 @@ Activity:
 Hand_Wash, No_Hand_Wash
 ```
 
-Under **Available Sensors**, you should see options such as:
+Under **Available Sensors**, select **1 Accelerometers** (the sensor this assignment uses).
 
-```text
-1 Accelerometers
-2 Magnetometer
-4 Gyroscope
-```
+Choose a sampling rate: **UI**, **Normal**, **Game**, **Fastest**, or **Custom**. With **Custom**, you can type a rate such as `50`.
 
-For this assignment, the **accelerometer** is the main sensor being used.
+Click **>>** to move the accelerometer into **Selected Sensors**.
 
-Select:
+Click **Save** to keep a copy on your computer, then **Push** to send the configuration to the watch.
 
-```text
-1 Accelerometers
-```
+> The Configuration tab starts out empty. That's normal. Either fill it in or click **Load** to open a saved configuration.
 
-Then choose a sampling rate.
+### A6. Download your data
 
-Available choices include:
+After you've recorded data on the watch, use the **Data** tab. Choose the folder on your computer where you want the files saved, then pull the data.
 
-```text
-UI
-Normal
-Game
-Fastest
-Custom
-```
-
-If you select:
-
-```text
-Custom
-```
-
-you can manually enter a rate such as:
-
-```text
-50
-```
-
-After selecting the sensor and rate, click:
-
-```text
->>
-```
-
-The accelerometer should appear under:
-
-```text
-Selected Sensors
-```
-
-You can then use:
-
-```text
-Save
-```
-
-to save the configuration locally.
-
-Use:
-
-```text
-Push
-```
-
-to upload the configuration to the connected watch.
-
-## Data Tab
-
-After collecting sensor data on the watch, the **Data** tab can be used to download the files from the watch to your computer.
-
-The WADA desktop application is therefore mainly used for:
-
-```text
-Create Configuration
-        ↓
-Push Configuration
-        ↓
-Collect Data on Watch
-        ↓
-Pull Data to Computer
-```
+**Path A done.** Skip ahead to Part 3.
 
 ---
 
-# Option 2: Use ADB Commands Directly
+## Path B: Commands (Windows, macOS, Linux)
 
-If you prefer not to use the WADA desktop GUI, or if the GUI does not work properly on your operating system, you can perform the same operations using ADB commands.
+Open a terminal in the `platform-tools` folder (see Step 3). Remember: on macOS/Linux, type `./adb` instead of `adb` unless you installed it with Homebrew.
 
-This is also a useful fallback for macOS users.
+### B1. Check that WADA is installed
 
-Open Command Prompt or Terminal inside the `platform-tools` folder.
-
-## 1. Check Whether the Watch Is Connected
-
-Run:
-
-```cmd
-adb devices
-```
-
-You should see:
-
-```text
-List of devices attached
-XXXXXXXXXXXX    device
-```
-
-If the device shows as:
-
-```text
-unauthorized
-```
-
-check the watch and approve the USB debugging request.
-
-## 2. Confirm That WADA Is Installed
-
-On Windows, run:
+Windows:
 
 ```cmd
 adb shell pm list packages | findstr /i wada
 ```
 
-You should see the WADA package.
+macOS/Linux:
 
-The package name is:
-
-```text
-edu.virginia.cs.mooncake.wada
+```bash
+adb shell pm list packages | grep -i wada
 ```
 
-## 3. Push a Configuration File to the Watch
-
-Assuming your configuration file is named:
+You should see:
 
 ```text
-config.json
+package:edu.virginia.cs.mooncake.wada
 ```
 
-run:
+### B2. Prepare your configuration file
+
+The configuration is a file called `config.json`. Start from the one provided (or one from your instructor), edit it in any text editor, and save it inside your `platform-tools` folder.
+
+### B3. Push the configuration to the watch
 
 ```cmd
 adb push config.json /sdcard/wada/config/config.json
 ```
 
-This copies the configuration file from your computer to the WADA configuration directory on the watch.
-
-## 4. Check the Configuration on the Watch
-
-Run:
+### B4. Check the configuration on the watch
 
 ```cmd
 adb shell cat /sdcard/wada/config/config.json
 ```
 
-The current configuration should be printed in the terminal.
+Your configuration should print in the terminal.
 
 ![Access WADA config through ADB](Contents/access-config-through-adb.png)
 
-This is useful for confirming that the correct configuration was successfully pushed.
-
-## 5. Restart WADA After Updating the Configuration
-
-After changing the configuration, stop the running WADA application:
+### B5. Restart WADA so it loads the new configuration
 
 ```cmd
 adb shell am force-stop edu.virginia.cs.mooncake.wada
 ```
 
-Then manually reopen WADA on the watch.
+Then open WADA again on the watch.
 
-This allows WADA to reload the updated configuration.
+### B6. See your recorded files
 
-## 6. View Saved Data Files
-
-To see the data files currently stored on the watch, run:
+After recording, list the files on the watch:
 
 ```cmd
 adb shell ls -la /sdcard/wada/data
 ```
 
-This should list the data files created during WADA recording sessions.
+### B7. Download your data
 
-## 7. Download a Specific Data File
-
-To download a specific file from the watch:
-
-```cmd
-adb pull /sdcard/wada/data/FILENAME
-```
-
-Replace:
-
-```text
-FILENAME
-```
-
-with the actual file name.
-
-For example:
-
-```cmd
-adb pull /sdcard/wada/data/example.wada
-```
-
-The file will be downloaded into the folder from which you ran the command.
-
-## 8. Download the Entire WADA Data Folder
-
-Instead of downloading one file at a time, you can also pull the entire folder:
+Download everything at once:
 
 ```cmd
 adb pull /sdcard/wada/data
 ```
 
-This downloads all collected WADA files to your computer.
+Or just one file:
 
----
-
-# Overall WADA Workflow
-
-The complete setup and data collection process is:
-
-```text
-Install Android Platform Tools
-        ↓
-Install Java
-        ↓
-Enable Developer Options
-        ↓
-Enable ADB Debugging
-        ↓
-Connect Watch through USB
-        ↓
-Run adb devices
-        ↓
-Download WADA Repository
-        ↓
-Run WADA Desktop GUI
-        OR
-Use ADB Commands
-        ↓
-Create / Push Configuration
-        ↓
-Open WADA on Watch
-        ↓
-Collect Sensor Data
-        ↓
-Stop Data Collection
-        ↓
-Pull Data from Watch
-        ↓
-Process the .wada Files
+```cmd
+adb pull /sdcard/wada/data/FILENAME
 ```
 
-The WADA desktop GUI and the ADB command-line method are simply two different ways to perform the same watch-management operations.
+replacing `FILENAME` with the real name, for example:
 
-For Windows, the **WADA Desktop GUI is generally easier**.
+```cmd
+adb pull /sdcard/wada/data/example.wada
+```
 
-For macOS/Linux, or if the WADA desktop application causes compatibility issues, the **ADB command-line method can be used instead**.
+Files are saved in the folder where you ran the command.
 
 ---
 
-# Relationship to the Assignment
-
-For the smartwatch assignment, the overall pipeline is:
+# Part 3: The full workflow
 
 ```text
-Configure WADA
+Part 1 (everyone)
+  Turn on ADB debugging
         ↓
-Collect Hand-Washing Data
+  Install Platform Tools
         ↓
-Collect Non-Hand-Washing Data
+  Connect watch, run adb devices
+
+Part 2 (pick one)
+  Path A: Java + WADA Desktop app     OR     Path B: Commands
         ↓
-.wada Files
+  Push configuration
+        ↓
+  Restart / open WADA on the watch
+        ↓
+  Record data (START / STOP on the watch)
+        ↓
+  Pull data to your computer
+        ↓
+  Process the .wada files (assignment)
+```
+
+## How this connects to the assignment
+
+```text
+.wada files
         ↓
 Wada.jar
         ↓
-Accelerometer CSV Files
+Accelerometer CSV files
         ↓
-Your Java Program
+Your Java program
         ↓
-1-Second Windows
+1-second windows
         ↓
-Feature Extraction
+Feature extraction
         ↓
 features.csv
         ↓
@@ -687,277 +367,89 @@ features.arff
         ↓
 WEKA
         ↓
-Decision Tree Classification
+Decision tree classification
 ```
 
-For Assignment 1, the important sensor is the:
+The raw WADA files may contain other sensors, but Assignment 1 uses only the **accelerometer** data.
 
-```text
-Accelerometer
-```
+## Three different WADA tools
 
-The raw WADA files may contain data from additional sensors, but the assignment uses accelerometer data for the hand-washing recognition task.
+These are easy to mix up:
 
----
-
-# Important Distinction Between WADA Tools
-
-There are three different WADA-related components used throughout the assignment.
-
-## WADA Watch App
-
-Runs on the smartwatch.
-
-Used to:
-
-```text
-START data collection
-STOP data collection
-Select labels/tags
-Store recorded sensor data
-```
-
-## WADA Desktop App
-
-Runs on the laptop.
-
-Used to:
-
-```text
-Create configurations
-Push configurations to the watch
-Download recorded files from the watch
-```
-
-## Wada.jar
-
-Runs on the laptop after data has been collected.
-
-Used to:
-
-```text
-Extract accelerometer data from .wada files
-Convert CSV feature files to ARFF format
-```
-
-These are different tools and serve different purposes.
+- **WADA watch app** runs on the watch. Use it to START and STOP recording, choose labels, and store the sensor data.
+- **WADA Desktop app** runs on your computer (Path A only). Use it to create and push configurations and download recordings.
+- **Wada.jar** runs on your computer after data collection. Use it to extract accelerometer data from `.wada` files and to convert CSV feature files to ARFF.
 
 ---
 
 # Troubleshooting
 
-## `adb` Is Not Recognized
+## `adb` is not recognized / command not found
 
-Make sure Command Prompt is opened inside:
+Make sure your terminal is open inside the `platform-tools` folder and that `adb` is in it. On macOS/Linux, use `./adb`.
 
-```text
-platform-tools
-```
+## Device shows as `unauthorized`
 
-Verify that the folder contains:
+Look at the watch screen, choose **Always allow from this computer**, approve, and run `adb devices` again.
 
-```text
-adb.exe
-```
+## No device appears under `adb devices`
 
-Then try:
+Check that:
 
-```cmd
-adb devices
-```
+- the watch is plugged in
+- the USB cable supports data (some cables are charge-only)
+- ADB debugging is on
+- you approved the computer on the watch
 
-again.
+Then unplug and reconnect the watch.
 
-## `java` Is Not Recognized
+## `java` is not recognized (Path A)
 
-Close and reopen Command Prompt after installing Java.
+Close and reopen Command Prompt, then run `java -version`. If it still fails, restart your computer.
 
-Then run:
+## WADA Desktop app doesn't open (Path A)
 
-```cmd
-java -version
-```
-
-If the command still does not work, restart the computer and try again.
-
-## Device Shows as `unauthorized`
-
-Look at the smartwatch screen.
-
-You should see a USB debugging authorization request.
-
-Select:
-
-```text
-Always allow from this computer
-```
-
-and approve it.
-
-Then run:
-
-```cmd
-adb devices
-```
-
-again.
-
-## No Device Appears Under `adb devices`
-
-Check the following:
-
-- The watch is physically connected
-- The USB cable supports data transfer
-- ADB debugging is enabled
-- The watch has authorized the computer
-- `adb.exe` is being run from the correct folder
-
-You can also try disconnecting and reconnecting the watch.
-
-## WADA Desktop Does Not Open
-
-Make sure Java is installed:
-
-```cmd
-java -version
-```
-
-Then open Command Prompt in the directory containing:
-
-```text
-WaDa Desktop.jar
-```
-
-and run:
+Open Command Prompt in the folder with `WaDa Desktop.jar` and run:
 
 ```cmd
 java -jar "WaDa Desktop.jar"
 ```
 
-Running it through Command Prompt is useful because any Java errors will appear directly in the terminal.
+Any errors will show in the terminal.
 
-## WADA Desktop Opens but the Configuration Page Is Empty
+## The configuration didn't change on the watch
 
-This is normal.
-
-The desktop application opens with an empty configuration until you either:
-
-- create a new configuration, or
-- click `Load` and load an existing configuration file
-
-Fill in the configuration name, tags, options, sensors, and sampling rate before saving or pushing it.
-
-## Configuration Does Not Change on the Watch
-
-First verify what configuration is currently stored:
+Check what's on the watch:
 
 ```cmd
 adb shell cat /sdcard/wada/config/config.json
 ```
 
-If the correct configuration is present, stop WADA:
+If it's correct, restart WADA:
 
 ```cmd
 adb shell am force-stop edu.virginia.cs.mooncake.wada
 ```
 
-Then reopen WADA manually on the watch.
+and reopen it on the watch.
 
-## macOS Issues
+## The desktop app isn't working on a Mac
 
-The WADA desktop program and helper scripts were primarily developed around a Windows workflow.
-
-In particular:
-
-```text
-.bat files
-```
-
-are Windows-specific and will not run directly on macOS.
-
-If the GUI or provided helper scripts cause issues on macOS, use the ADB commands directly from Terminal instead.
-
-The general ADB commands remain the same:
-
-```bash
-adb devices
-adb push ...
-adb pull ...
-adb shell ...
-```
-
-Windows-specific commands such as:
-
-```cmd
-findstr
-```
-
-may need a macOS/Linux equivalent such as:
-
-```bash
-grep
-```
-
-For example:
-
-```bash
-adb shell pm list packages | grep -i wada
-```
+Path A hasn't been tested on macOS. Use the Path B commands instead; they do the same thing.
 
 ---
 
-# Quick Reference
+# Quick reference
 
-Check the watch:
-
-```cmd
-adb devices
-```
-
-Check whether WADA is installed:
-
-```cmd
-adb shell pm list packages | findstr /i wada
-```
-
-Push the configuration:
-
-```cmd
-adb push config.json /sdcard/wada/config/config.json
-```
-
-View the configuration:
-
-```cmd
-adb shell cat /sdcard/wada/config/config.json
-```
-
-Restart WADA:
-
-```cmd
-adb shell am force-stop edu.virginia.cs.mooncake.wada
-```
-
-View recorded files:
-
-```cmd
-adb shell ls -la /sdcard/wada/data
-```
-
-Pull one file:
-
-```cmd
-adb pull /sdcard/wada/data/FILENAME
-```
-
-Pull all data:
-
-```cmd
-adb pull /sdcard/wada/data
-```
-
-Launch the WADA Desktop application:
-
-```cmd
-java -jar "WaDa Desktop.jar"
-```
+| Task | Command |
+|---|---|
+| Check the watch is connected | `adb devices` |
+| Check WADA is installed (Windows) | `adb shell pm list packages \| findstr /i wada` |
+| Check WADA is installed (macOS/Linux) | `adb shell pm list packages \| grep -i wada` |
+| Push configuration | `adb push config.json /sdcard/wada/config/config.json` |
+| View configuration | `adb shell cat /sdcard/wada/config/config.json` |
+| Restart WADA | `adb shell am force-stop edu.virginia.cs.mooncake.wada` |
+| List recorded files | `adb shell ls -la /sdcard/wada/data` |
+| Pull one file | `adb pull /sdcard/wada/data/FILENAME` |
+| Pull all data | `adb pull /sdcard/wada/data` |
+| Open the desktop app (Path A) | `java -jar "WaDa Desktop.jar"` |
